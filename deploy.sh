@@ -41,6 +41,7 @@ install_nginx
 
 mkdir -p "${WEB_ROOT}"
 cp "${PROJECT_DIR}/index.html" "${WEB_ROOT}/index.html"
+cp "${PROJECT_DIR}/monitor-unavailable.html" "${WEB_ROOT}/monitor-unavailable.html"
 mkdir -p "${WEB_ROOT}/assets"
 cp -R "${PROJECT_DIR}/assets/." "${WEB_ROOT}/assets/"
 
