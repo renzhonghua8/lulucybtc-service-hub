@@ -52,7 +52,8 @@ enable_nginx
 
 echo "Done."
 echo "Open: http://lulucybtc.com"
-echo "Main: http://main.lulucybtc.com -> original 43.167.14.143 default port 80 page"
+echo "Main: http://main.lulucybtc.com -> 127.0.0.1:4173"
+echo "Trade: http://trade.lulucybtc.com -> original 43.167.14.143 default port 80 page"
 echo
 echo "HTTPS next step after DNS points to this server:"
 echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com"
