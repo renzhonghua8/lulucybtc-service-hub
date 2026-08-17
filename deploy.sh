@@ -3,7 +3,7 @@ set -euo pipefail
 
 APP_NAME="lulucybtc-service-hub"
 WEB_ROOT="/var/www/lulucybtc"
-MAIN_ROOT="/var/www/lulucybtc-main"
+MAIN_ROOT="${MAIN_ROOT:-/usr/share/nginx/html}"
 NGINX_CONF="/etc/nginx/conf.d/lulucybtc.conf"
 MAIN_SERVICE="/etc/systemd/system/lulucybtc-main.service"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -47,9 +47,12 @@ cp "${PROJECT_DIR}/monitor-unavailable.html" "${WEB_ROOT}/monitor-unavailable.ht
 mkdir -p "${WEB_ROOT}/assets"
 cp -R "${PROJECT_DIR}/assets/." "${WEB_ROOT}/assets/"
 
-mkdir -p "${MAIN_ROOT}"
-cp "${PROJECT_DIR}/main.html" "${MAIN_ROOT}/index.html"
-cp -R "${PROJECT_DIR}/assets/." "${MAIN_ROOT}/assets/"
+if [[ ! -d "${MAIN_ROOT}" ]]; then
+  echo "MAIN_ROOT does not exist: ${MAIN_ROOT}"
+  echo "Set the original main site directory, for example:"
+  echo "  sudo MAIN_ROOT=/path/to/main-site ./deploy.sh"
+  exit 1
+fi
 
 cat > "${MAIN_SERVICE}" <<SERVICE
 [Unit]
@@ -78,7 +81,7 @@ enable_nginx
 
 echo "Done."
 echo "Open: http://lulucybtc.com"
-echo "Main: http://main.lulucybtc.com -> 127.0.0.1:18081"
+echo "Main: http://main.lulucybtc.com -> 127.0.0.1:18081 (${MAIN_ROOT})"
 echo
 echo "HTTPS next step after DNS points to this server:"
 echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com"
