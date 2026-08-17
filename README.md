@@ -7,7 +7,7 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | 域名 | 目标服务 |
 | --- | --- |
 | `lulucybtc.com` / `www.lulucybtc.com` | 静态中转页 |
-| `main.lulucybtc.com` | 默认站点目录 `/var/www/html` |
+| `main.lulucybtc.com` | Nginx 默认站点目录 `/usr/share/nginx/html` |
 | `bscchain.lulucybtc.com` | `127.0.0.1:18080` |
 | `solchain.lulucybtc.com` | 前端 `127.0.0.1:5174`，API `127.0.0.1:8787/api/` |
 | `trade.lulucybtc.com` | `127.0.0.1:4173` |
@@ -42,6 +42,26 @@ Nginx 会自动把它转发到服务器本机：
 ```text
 127.0.0.1:8787/api/snapshot
 ```
+
+如果浏览器网络面板里还看到它请求：
+
+```text
+http://solchain.lulucybtc.com:8787/api/snapshot
+```
+
+说明 Solchain 前端包还没有改成相对 API 地址。需要在 Solchain 前端项目里把 API 基础地址改成 `/api`，重新构建并部署前端。
+
+## 服务自检
+
+Cloudflare 502 表示 DNS 已经到服务器了，但 Nginx 反代的本机端口没有正常响应。部署后在服务器上检查：
+
+```bash
+curl -I http://127.0.0.1:5174
+curl -I http://127.0.0.1:8787/api/snapshot
+curl -I http://127.0.0.1:8000
+```
+
+如果 `monitor.lulucybtc.com` 还是 502，重点检查 `8000` 端口服务是否正在运行，并确认它监听在 `127.0.0.1:8000` 或 `0.0.0.0:8000`。
 
 ## DNS 解析
 
