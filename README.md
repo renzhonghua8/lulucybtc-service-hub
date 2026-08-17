@@ -7,7 +7,7 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | 域名 | 目标服务 |
 | --- | --- |
 | `lulucybtc.com` / `www.lulucybtc.com` | 静态中转页 |
-| `main.lulucybtc.com` | Nginx 默认站点目录 `/usr/share/nginx/html` |
+| `main.lulucybtc.com` | 暂时复用 Service Hub 静态目录 `/var/www/lulucybtc` |
 | `bscchain.lulucybtc.com` | `127.0.0.1:18080` |
 | `solchain.lulucybtc.com` | 前端 `127.0.0.1:5174`，API `127.0.0.1:8787/api/` |
 | `trade.lulucybtc.com` | `127.0.0.1:4173` |
