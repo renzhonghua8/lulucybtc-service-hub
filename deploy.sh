@@ -53,4 +53,4 @@ echo "Done."
 echo "Open: http://lulucybtc.com"
 echo
 echo "HTTPS next step after DNS points to this server:"
-echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor2.lulucybtc.com"
+echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com"
