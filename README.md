@@ -7,7 +7,7 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | 域名 | 目标服务 |
 | --- | --- |
 | `lulucybtc.com` / `www.lulucybtc.com` | 静态中转页 |
-| `main.lulucybtc.com` | 独立主站服务 `127.0.0.1:18081`，读取原主站目录 |
+| `main.lulucybtc.com` | 原 `43.167.14.143` 默认 80 页面 |
 | `bscchain.lulucybtc.com` | `127.0.0.1:18080` |
 | `solchain.lulucybtc.com` | 前端 `127.0.0.1:5174`，API `127.0.0.1:8787/api/`，WebSocket `127.0.0.1:8787/ws` |
 | `trade.lulucybtc.com` | `127.0.0.1:4173` |
@@ -21,18 +21,6 @@ git clone https://github.com/renzhonghua8/lulucybtc-service-hub.git
 cd lulucybtc-service-hub
 chmod +x deploy.sh
 sudo ./deploy.sh
-```
-
-如果原来的 80 页面不在 `/usr/share/nginx/html`，部署时指定原页面目录：
-
-```bash
-sudo MAIN_ROOT=/你的原主站目录 ./deploy.sh
-```
-
-例如：
-
-```bash
-sudo MAIN_ROOT=/var/www/html ./deploy.sh
 ```
 
 ## Solchain API 请求
@@ -70,7 +58,7 @@ Cloudflare 502 表示 DNS 已经到服务器了，但 Nginx 反代的本机端�
 ```bash
 curl -I http://127.0.0.1:5174
 curl -I http://127.0.0.1:8787/api/snapshot
-curl -I http://127.0.0.1:18081
+curl -I -H 'Host: 43.167.14.143' http://127.0.0.1
 curl -I http://127.0.0.1:8000
 ```
 

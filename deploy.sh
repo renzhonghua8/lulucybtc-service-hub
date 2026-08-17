@@ -3,9 +3,7 @@ set -euo pipefail
 
 APP_NAME="lulucybtc-service-hub"
 WEB_ROOT="/var/www/lulucybtc"
-MAIN_ROOT="${MAIN_ROOT:-/usr/share/nginx/html}"
 NGINX_CONF="/etc/nginx/conf.d/lulucybtc.conf"
-MAIN_SERVICE="/etc/systemd/system/lulucybtc-main.service"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ "${EUID}" -ne 0 ]]; then
@@ -47,33 +45,6 @@ cp "${PROJECT_DIR}/monitor-unavailable.html" "${WEB_ROOT}/monitor-unavailable.ht
 mkdir -p "${WEB_ROOT}/assets"
 cp -R "${PROJECT_DIR}/assets/." "${WEB_ROOT}/assets/"
 
-if [[ ! -d "${MAIN_ROOT}" ]]; then
-  echo "MAIN_ROOT does not exist: ${MAIN_ROOT}"
-  echo "Set the original main site directory, for example:"
-  echo "  sudo MAIN_ROOT=/path/to/main-site ./deploy.sh"
-  exit 1
-fi
-
-cat > "${MAIN_SERVICE}" <<SERVICE
-[Unit]
-Description=LULUCYBTC main static site
-After=network.target
-
-[Service]
-Type=simple
-WorkingDirectory=${MAIN_ROOT}
-ExecStart=/usr/bin/env python3 -m http.server 18081 --bind 127.0.0.1
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-SERVICE
-
-systemctl daemon-reload
-systemctl enable lulucybtc-main >/dev/null 2>&1 || true
-systemctl restart lulucybtc-main
-
 cp "${PROJECT_DIR}/nginx/lulucybtc.conf" "${NGINX_CONF}"
 
 nginx -t
@@ -81,7 +52,7 @@ enable_nginx
 
 echo "Done."
 echo "Open: http://lulucybtc.com"
-echo "Main: http://main.lulucybtc.com -> 127.0.0.1:18081 (${MAIN_ROOT})"
+echo "Main: http://main.lulucybtc.com -> original 43.167.14.143 default port 80 page"
 echo
 echo "HTTPS next step after DNS points to this server:"
 echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com"
