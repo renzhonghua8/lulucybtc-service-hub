@@ -65,6 +65,38 @@ curl -I http://127.0.0.1:8000
 
 如果 `monitor.lulucybtc.com` 还是 502，重点检查 `8000` 端口服务是否正在运行，并确认它监听在 `127.0.0.1:8000` 或 `0.0.0.0:8000`。
 
+## 访问量统计
+
+Nginx 会统一记录 JSON 访问日志：
+
+```text
+/var/log/nginx/lulucybtc_access.json
+```
+
+可以记录：
+
+- 访问时间
+- 访问域名和路径
+- HTTP 方法、状态码、返回大小
+- 请求耗时和上游服务耗时
+- Cloudflare 传来的真实来访 IP、国家代码
+- Referer 来源页面
+- User-Agent 浏览器/系统信息
+
+不会记录 Cookie、请求体、密码或表单内容。
+
+查看最近 24 小时页面访问量：
+
+```bash
+sudo lulucybtc-traffic-summary
+```
+
+查看最近 7 天，并包含 API 和静态资源：
+
+```bash
+sudo lulucybtc-traffic-summary --hours 168 --all
+```
+
 ## DNS 解析
 
 把下面所有记录都解析到服务器公网 IP：

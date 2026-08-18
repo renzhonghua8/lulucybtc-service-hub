@@ -46,6 +46,22 @@ mkdir -p "${WEB_ROOT}/assets"
 cp -R "${PROJECT_DIR}/assets/." "${WEB_ROOT}/assets/"
 
 cp "${PROJECT_DIR}/nginx/lulucybtc.conf" "${NGINX_CONF}"
+cp "${PROJECT_DIR}/scripts/traffic-summary.py" "/usr/local/bin/lulucybtc-traffic-summary"
+chmod +x "/usr/local/bin/lulucybtc-traffic-summary"
+
+cat > /etc/logrotate.d/lulucybtc <<'LOGROTATE'
+/var/log/nginx/lulucybtc_access.json {
+    daily
+    rotate 30
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        /bin/systemctl reload nginx >/dev/null 2>&1 || true
+    endscript
+}
+LOGROTATE
 
 nginx -t
 enable_nginx
@@ -54,6 +70,8 @@ echo "Done."
 echo "Open: http://lulucybtc.com"
 echo "Main: http://main.lulucybtc.com -> 127.0.0.1:4173"
 echo "Trade: http://trade.lulucybtc.com -> original 43.167.14.143 default port 80 page"
+echo "Traffic log: /var/log/nginx/lulucybtc_access.json"
+echo "Traffic summary: lulucybtc-traffic-summary"
 echo
 echo "HTTPS next step after DNS points to this server:"
 echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com"
