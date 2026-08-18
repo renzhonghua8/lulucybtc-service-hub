@@ -4,8 +4,9 @@ import json
 import os
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlparse
 
 
@@ -34,7 +35,10 @@ def parse_time(value):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        clean = value.replace("Z", "+0000")
+        if clean[-3] == ":" and clean[-6] in ("+", "-"):
+            clean = clean[:-3] + clean[-2:]
+        return datetime.strptime(clean, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
         return None
 
@@ -222,6 +226,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         return
+
+
+class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
+    daemon_threads = True
 
 
 if __name__ == "__main__":
