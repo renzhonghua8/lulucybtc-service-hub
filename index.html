@@ -319,33 +319,6 @@
         overflow-wrap: anywhere;
       }
 
-      .ops {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-        margin-top: 14px;
-      }
-
-      .ops-box {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 18px;
-        background: rgba(255, 255, 255, 0.045);
-      }
-
-      .ops-box h3 {
-        margin: 0 0 12px;
-        font-size: 1rem;
-      }
-
-      .ops-box code {
-        display: block;
-        margin-top: 8px;
-        color: var(--muted);
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-      }
-
       footer {
         display: flex;
         justify-content: space-between;
@@ -358,8 +331,7 @@
       }
 
       @media (max-width: 920px) {
-        .hero,
-        .ops {
+        .hero {
           grid-template-columns: 1fr;
         }
 
@@ -420,8 +392,7 @@
           <div class="eyebrow"><span class="pulse"></span>Gateway Online</div>
           <h1 id="page-title">LULUCYBTC Service Hub</h1>
           <p class="lead">
-            统一进入主站、链上工具、交易系统和监控服务。这个页面适合部署在
-            lulucybtc.com 根域名，子域名由 Nginx 反向代理到服务器内的不同端口。
+            统一进入主站、链上工具、交易系统和监控服务。为策略研究、行情观察和基础设施管理提供清晰入口。
           </p>
           <div class="actions">
             <a class="button primary" href="https://trade.lulucybtc.com">打开交易系统</a>
@@ -429,27 +400,27 @@
           </div>
         </div>
 
-        <aside class="status-panel" aria-label="Deployment summary">
+        <aside class="status-panel" aria-label="Platform summary">
           <div class="panel-head">
-            <h2>部署概览</h2>
-            <span class="badge">Nginx Ready</span>
+            <h2>平台概览</h2>
+            <span class="badge">Live</span>
           </div>
           <div class="metric-grid">
             <div class="metric">
-              <span>Root Domain</span>
-              <strong>lulucybtc.com</strong>
+              <span>Market</span>
+              <strong>Crypto</strong>
             </div>
             <div class="metric">
-              <span>Services</span>
-              <strong>6 routes</strong>
+              <span>Signals</span>
+              <strong>Realtime</strong>
             </div>
             <div class="metric">
-              <span>Web Root</span>
-              <strong>/var/www/lulucybtc</strong>
+              <span>Strategy</span>
+              <strong>Research</strong>
             </div>
             <div class="metric">
-              <span>Config</span>
-              <strong>nginx/lulucybtc.conf</strong>
+              <span>Access</span>
+              <strong>Unified</strong>
             </div>
           </div>
         </aside>
@@ -467,17 +438,17 @@
           <a class="service-card" href="https://main.lulucybtc.com">
             <div class="service-top">
               <div class="icon">M</div>
-              <span class="state"><span class="dot"></span>Port 4173</span>
+              <span class="state"><span class="dot"></span>Primary</span>
             </div>
             <h3>主站</h3>
-            <p>主业务站点入口，当前代理到服务器本机 4173 服务。</p>
+            <p>主业务站点入口，适合进入核心产品、账户中心和主要工作台。</p>
             <span class="service-link">main.lulucybtc.com <span>→</span></span>
           </a>
 
           <a class="service-card" href="https://bscchain.lulucybtc.com">
             <div class="service-top">
               <div class="icon">B</div>
-              <span class="state"><span class="dot"></span>Port 18080</span>
+              <span class="state"><span class="dot"></span>Chain Tools</span>
             </div>
             <h3>BSC Chain</h3>
             <p>BSC 链上工具、数据查询和相关服务入口。</p>
@@ -487,7 +458,7 @@
           <a class="service-card" href="https://solchain.lulucybtc.com">
             <div class="service-top">
               <div class="icon">S</div>
-              <span class="state"><span class="dot"></span>Port 5174</span>
+              <span class="state"><span class="dot"></span>Radar</span>
             </div>
             <h3>Solana Chain</h3>
             <p>Solana 链上应用、分析工具或前端服务入口。</p>
@@ -497,17 +468,17 @@
           <a class="service-card" href="https://trade.lulucybtc.com">
             <div class="service-top">
               <div class="icon">T</div>
-              <span class="state"><span class="dot"></span>Default 80</span>
+              <span class="state"><span class="dot"></span>Trading</span>
             </div>
             <h3>Trade</h3>
-            <p>交易入口当前映射到原 43.167.14.143 默认 80 页面。</p>
+            <p>交易系统入口，用于策略操作、交易视图和执行相关工作流。</p>
             <span class="service-link">trade.lulucybtc.com <span>→</span></span>
           </a>
 
           <a class="service-card" href="https://monitor.lulucybtc.com">
             <div class="service-top">
               <div class="icon">2</div>
-              <span class="state"><span class="dot"></span>Port 8000</span>
+              <span class="state"><span class="dot"></span>Monitoring</span>
             </div>
             <h3>Monitor Pro</h3>
             <p>服务器状态、服务进程、日志和策略运行监控入口。</p>
@@ -523,21 +494,6 @@
             <p>当前中转页。建议作为所有内部工具的统一导航首页。</p>
             <span class="service-link">lulucybtc.com <span>→</span></span>
           </a>
-        </div>
-      </section>
-
-      <section class="ops" aria-label="Operations notes">
-        <div class="ops-box">
-          <h3>服务器部署目录</h3>
-          <code>/opt/lulucybtc-service-hub
-/var/www/lulucybtc
-/etc/nginx/conf.d/lulucybtc.conf</code>
-        </div>
-        <div class="ops-box">
-          <h3>建议保护的服务</h3>
-          <code>trade.lulucybtc.com
-monitor.lulucybtc.com
-后续建议接入 Cloudflare Access 或 Nginx Basic Auth</code>
         </div>
       </section>
 
