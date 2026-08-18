@@ -12,6 +12,7 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | `solchain.lulucybtc.com` | 前端 `127.0.0.1:5174`，API `127.0.0.1:8787/api/`，WebSocket `127.0.0.1:8787/ws` |
 | `trade.lulucybtc.com` | 原 `43.167.14.143` 默认 80 页面 |
 | `monitor.lulucybtc.com` | `127.0.0.1:8000`，异常时显示本地降级页 |
+| `admin.lulucybtc.com` | 访问统计后台 `127.0.0.1:18082` |
 
 ## 服务器部署
 
@@ -97,6 +98,35 @@ sudo lulucybtc-traffic-summary
 sudo lulucybtc-traffic-summary --hours 168 --all
 ```
 
+## 访问统计后台
+
+后台域名：
+
+```text
+admin.lulucybtc.com
+```
+
+内部端口：
+
+```text
+127.0.0.1:18082
+```
+
+首次部署会自动生成账号密码，保存在服务器：
+
+```bash
+sudo cat /etc/lulucybtc-admin.env
+```
+
+修改密码：
+
+```bash
+sudo vim /etc/lulucybtc-admin.env
+sudo systemctl restart lulucybtc-admin
+```
+
+后台页面可以查看各域名访问量、独立访客 IP 数、热门路径、国家/地区、状态码、慢请求和浏览器信息。
+
 ## DNS 解析
 
 把下面所有记录都解析到服务器公网 IP：
@@ -109,6 +139,7 @@ bscchain.lulucybtc.com
 solchain.lulucybtc.com
 trade.lulucybtc.com
 monitor.lulucybtc.com
+admin.lulucybtc.com
 ```
 
 ## HTTPS
@@ -139,7 +170,8 @@ sudo certbot --nginx \
   -d bscchain.lulucybtc.com \
   -d solchain.lulucybtc.com \
   -d trade.lulucybtc.com \
-  -d monitor.lulucybtc.com
+  -d monitor.lulucybtc.com \
+  -d admin.lulucybtc.com
 ```
 
 ## 安全建议

@@ -4,6 +4,8 @@ set -euo pipefail
 APP_NAME="lulucybtc-service-hub"
 WEB_ROOT="/var/www/lulucybtc"
 NGINX_CONF="/etc/nginx/conf.d/lulucybtc.conf"
+ADMIN_SERVICE="/etc/systemd/system/lulucybtc-admin.service"
+ADMIN_ENV="/etc/lulucybtc-admin.env"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ "${EUID}" -ne 0 ]]; then
@@ -48,6 +50,43 @@ cp -R "${PROJECT_DIR}/assets/." "${WEB_ROOT}/assets/"
 cp "${PROJECT_DIR}/nginx/lulucybtc.conf" "${NGINX_CONF}"
 cp "${PROJECT_DIR}/scripts/traffic-summary.py" "/usr/local/bin/lulucybtc-traffic-summary"
 chmod +x "/usr/local/bin/lulucybtc-traffic-summary"
+cp "${PROJECT_DIR}/scripts/admin-server.py" "/usr/local/bin/lulucybtc-admin-server"
+chmod +x "/usr/local/bin/lulucybtc-admin-server"
+
+if [[ ! -f "${ADMIN_ENV}" ]]; then
+  ADMIN_PASSWORD="$(python3 - <<'PY'
+import secrets
+print(secrets.token_urlsafe(18))
+PY
+)"
+  cat > "${ADMIN_ENV}" <<ENV
+ADMIN_USER=admin
+ADMIN_PASSWORD=${ADMIN_PASSWORD}
+ADMIN_PORT=18082
+TRAFFIC_LOG=/var/log/nginx/lulucybtc_access.json
+ENV
+  chmod 600 "${ADMIN_ENV}"
+fi
+
+cat > "${ADMIN_SERVICE}" <<SERVICE
+[Unit]
+Description=LULUCYBTC admin traffic dashboard
+After=network.target nginx.service
+
+[Service]
+Type=simple
+EnvironmentFile=${ADMIN_ENV}
+ExecStart=/usr/local/bin/lulucybtc-admin-server
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
+systemctl daemon-reload
+systemctl enable lulucybtc-admin >/dev/null 2>&1 || true
+systemctl restart lulucybtc-admin
 
 cat > /etc/logrotate.d/lulucybtc <<'LOGROTATE'
 /var/log/nginx/lulucybtc_access.json {
@@ -72,6 +111,8 @@ echo "Main: http://main.lulucybtc.com -> 127.0.0.1:4173"
 echo "Trade: http://trade.lulucybtc.com -> original 43.167.14.143 default port 80 page"
 echo "Traffic log: /var/log/nginx/lulucybtc_access.json"
 echo "Traffic summary: lulucybtc-traffic-summary"
+echo "Admin: http://admin.lulucybtc.com -> 127.0.0.1:18082"
+echo "Admin credentials file: /etc/lulucybtc-admin.env"
 echo
 echo "HTTPS next step after DNS points to this server:"
-echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com"
+echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com -d admin.lulucybtc.com"
