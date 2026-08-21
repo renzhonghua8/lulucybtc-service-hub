@@ -336,7 +336,7 @@ def page():
     h1{margin:0;font-size:2rem}p{margin:6px 0 0;color:var(--muted)}select,label{color:var(--muted)}select{height:38px;border:1px solid var(--line);border-radius:8px;background:#0c151d;color:var(--text);padding:0 10px}
     .grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.card,.panel{border:1px solid var(--line);border-radius:8px;background:var(--panel)}.card{padding:16px}.card span{color:var(--muted);font-size:.86rem}.card strong{display:block;margin-top:8px;font-size:1.55rem}
     .panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.panel{overflow:hidden}.panel.wide{grid-column:1/-1}.panel h2{margin:0;padding:13px 15px;border-bottom:1px solid var(--line);font-size:1rem}.rows{display:grid}.row{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:11px 15px;border-bottom:1px solid rgba(255,255,255,.07);align-items:center}.row:last-child{border-bottom:0}.row small{color:var(--muted);overflow-wrap:anywhere}.pill{color:var(--cyan);font-weight:800}.warn{color:var(--warn)}
-    .map-wrap{position:relative;display:grid;place-items:center;min-height:430px;padding:18px;background:radial-gradient(circle at 50% 45%,rgba(63,199,232,.16),transparent 22rem),linear-gradient(180deg,rgba(20,37,48,.62),rgba(8,16,22,.3))}.globe-canvas{width:min(440px,78vw);height:auto;aspect-ratio:1;filter:drop-shadow(0 28px 70px rgba(0,0,0,.42))}.map-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none;z-index:4}.bars{display:grid;gap:8px;padding:14px 15px}.bar{display:grid;grid-template-columns:140px 1fr 70px;gap:12px;align-items:center}.bar-track{height:9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--cyan))}
+    .map-wrap{position:relative;display:grid;place-items:center;min-height:470px;padding:18px;background:radial-gradient(circle at 50% 45%,rgba(63,199,232,.16),transparent 22rem),linear-gradient(180deg,rgba(20,37,48,.62),rgba(8,16,22,.3))}.globe-canvas{width:min(500px,80vw);height:auto;aspect-ratio:1;cursor:grab;filter:drop-shadow(0 30px 78px rgba(0,0,0,.48))}.globe-canvas:active{cursor:grabbing}.map-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none;z-index:4}.bars{display:grid;gap:8px;padding:14px 15px}.bar{display:grid;grid-template-columns:140px 1fr 70px;gap:12px;align-items:center}.bar-track{height:9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--cyan))}
     .daily{display:grid;grid-template-columns:repeat(30,1fr);gap:4px;align-items:end;min-height:160px;padding:16px}.day{min-height:6px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--cyan),rgba(63,199,232,.35))}
     @media(max-width:1100px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:900px){.grid,.panels{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.bar{grid-template-columns:1fr}.daily{grid-template-columns:repeat(15,1fr)}}
   </style>
@@ -380,15 +380,39 @@ def page():
     const canvas = $("globeCanvas");
     const ctx = canvas.getContext("2d");
     let globeCountries = [];
+    let userRotation = 0;
+    let dragging = false;
+    let dragStartX = 0;
+    let dragBaseRotation = 0;
+    const stars = Array.from({length: 120}, (_, i) => {
+      const seed = Math.sin(i * 9301 + 49297) * 233280;
+      const seed2 = Math.sin(i * 49297 + 233) * 233280;
+      return {x: Math.abs(seed % 1), y: Math.abs(seed2 % 1), s: .7 + Math.abs(Math.sin(i)) * 1.7};
+    });
     const land = [
-      [[-165,72],[-130,58],[-122,36],[-102,22],[-82,24],[-58,46],[-70,68],[-105,74]],
-      [[-82,13],[-76,-10],[-66,-22],[-58,-42],[-70,-56],[-82,-34],[-92,-12]],
-      [[-18,34],[2,50],[34,56],[66,48],[92,56],[128,46],[145,28],[112,10],[82,18],[54,8],[36,24],[10,18],[-8,28]],
-      [[-18,32],[10,34],[34,20],[42,-2],[31,-32],[18,-35],[4,-20],[-10,2]],
-      [[68,8],[84,22],[104,15],[122,4],[112,-8],[91,-4],[74,-14]],
-      [[112,-11],[153,-24],[146,-42],[118,-38],[108,-26]],
-      [[-52,72],[-28,72],[-22,62],[-45,58]],
+      [[-168,70],[-150,63],[-138,58],[-130,50],[-124,40],[-116,33],[-106,25],[-96,19],[-88,19],[-82,25],[-76,34],[-66,44],[-58,52],[-62,62],[-82,70],[-112,74],[-140,72]],
+      [[-96,18],[-88,15],[-83,8],[-80,-4],[-76,-14],[-70,-23],[-66,-34],[-60,-46],[-69,-55],[-78,-48],[-82,-36],[-86,-22],[-92,-8],[-98,6]],
+      [[-12,36],[3,48],[22,56],[43,58],[62,54],[78,49],[95,52],[116,50],[137,43],[146,33],[138,22],[120,16],[102,10],[88,18],[72,24],[56,21],[44,13],[30,19],[17,28],[3,25],[-8,30]],
+      [[-18,32],[-6,34],[10,31],[25,20],[35,8],[42,-6],[36,-21],[28,-32],[18,-35],[6,-28],[-4,-15],[-10,2],[-16,16]],
+      [[67,24],[78,25],[88,22],[98,18],[106,12],[119,3],[114,-8],[98,-6],[86,2],[75,6],[70,14]],
+      [[95,20],[110,18],[123,10],[128,0],[119,-8],[104,-1],[96,8]],
+      [[112,-11],[125,-18],[143,-22],[154,-32],[147,-42],[129,-39],[116,-31],[110,-22]],
+      [[-52,72],[-35,74],[-23,68],[-29,60],[-45,58],[-56,64]],
+      [[-180,-64],[-120,-68],[-60,-66],[0,-70],[65,-66],[128,-69],[180,-64],[180,-82],[-180,-82]],
     ];
+    const cloudBands = [-42, -18, 12, 34, 55];
+    canvas.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      dragStartX = event.clientX;
+      dragBaseRotation = userRotation;
+      canvas.setPointerCapture(event.pointerId);
+    });
+    canvas.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      userRotation = dragBaseRotation + (event.clientX - dragStartX) * .45;
+    });
+    canvas.addEventListener("pointerup", () => { dragging = false; });
+    canvas.addEventListener("pointercancel", () => { dragging = false; });
     function project(lat, lon, rotation){
       const rad = Math.PI / 180;
       const phi = lat * rad;
@@ -399,79 +423,98 @@ def page():
         z: Math.cos(phi) * Math.cos(lambda),
       };
     }
+    function drawProjectedLine(points, rotation, radius, cx, cy, closePath){
+      ctx.beginPath();
+      let started = false;
+      for (const item of points) {
+        const p = project(item[1], item[0], rotation);
+        if (p.z <= 0) { started = false; continue; }
+        const x = cx + p.x * radius;
+        const y = cy - p.y * radius;
+        started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        started = true;
+      }
+      if (closePath && started) ctx.closePath();
+    }
     function drawGlobe(time){
       const w = canvas.width;
       const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
       const r = Math.min(w, h) * .39;
-      const rotation = (time * .003) % 360;
+      const rotation = ((time * .0018) + userRotation) % 360;
       ctx.clearRect(0, 0, w, h);
-      const glow = ctx.createRadialGradient(cx, cy, r * .3, cx, cy, r * 1.45);
+      ctx.fillStyle = "#071016";
+      ctx.fillRect(0, 0, w, h);
+      for (const star of stars) {
+        ctx.beginPath();
+        ctx.arc(star.x * w, star.y * h, star.s, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(238,247,244,${.22 + star.s * .12})`;
+        ctx.fill();
+      }
+      const glow = ctx.createRadialGradient(cx, cy, r * .3, cx, cy, r * 1.55);
       glow.addColorStop(0, "rgba(63,199,232,.18)");
       glow.addColorStop(1, "rgba(63,199,232,0)");
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(cx, cy, r * 1.42, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r * 1.52, 0, Math.PI * 2);
       ctx.fill();
       const ocean = ctx.createRadialGradient(cx - r * .35, cy - r * .42, r * .08, cx, cy, r);
-      ocean.addColorStop(0, "#2f6f86");
-      ocean.addColorStop(.42, "#123747");
-      ocean.addColorStop(1, "#061117");
+      ocean.addColorStop(0, "#4b9ebb");
+      ocean.addColorStop(.32, "#1f5f78");
+      ocean.addColorStop(.68, "#0c2b39");
+      ocean.addColorStop(1, "#050d12");
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fillStyle = ocean;
       ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.018, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(95,215,238,.34)";
+      ctx.lineWidth = 4;
+      ctx.stroke();
       ctx.save();
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.clip();
-      ctx.strokeStyle = "rgba(238,247,244,.10)";
+      ctx.strokeStyle = "rgba(238,247,244,.12)";
       ctx.lineWidth = 1.1;
       for (let lat = -60; lat <= 60; lat += 30) {
-        ctx.beginPath();
-        let started = false;
+        const line = [];
         for (let lon = -180; lon <= 180; lon += 4) {
-          const p = project(lat, lon, rotation);
-          if (p.z <= 0) { started = false; continue; }
-          const x = cx + p.x * r;
-          const y = cy - p.y * r;
-          started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-          started = true;
+          line.push([lon, lat]);
         }
+        drawProjectedLine(line, rotation, r, cx, cy, false);
         ctx.stroke();
       }
       for (let lon = -150; lon <= 180; lon += 30) {
-        ctx.beginPath();
-        let started = false;
+        const line = [];
         for (let lat = -80; lat <= 80; lat += 4) {
-          const p = project(lat, lon, rotation);
-          if (p.z <= 0) { started = false; continue; }
-          const x = cx + p.x * r;
-          const y = cy - p.y * r;
-          started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-          started = true;
+          line.push([lon, lat]);
         }
+        drawProjectedLine(line, rotation, r, cx, cy, false);
         ctx.stroke();
       }
-      ctx.fillStyle = "rgba(67,211,137,.26)";
-      ctx.strokeStyle = "rgba(130,235,190,.18)";
-      ctx.lineWidth = 1.4;
+      ctx.fillStyle = "rgba(68,155,104,.56)";
+      ctx.strokeStyle = "rgba(178,240,204,.36)";
+      ctx.lineWidth = 1.8;
       for (const poly of land) {
-        ctx.beginPath();
-        let started = false;
-        for (const item of poly) {
-          const p = project(item[1], item[0], rotation);
-          if (p.z <= 0) { started = false; continue; }
-          const x = cx + p.x * r;
-          const y = cy - p.y * r;
-          started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-          started = true;
-        }
-        ctx.closePath();
+        drawProjectedLine(poly, rotation, r, cx, cy, true);
         ctx.fill();
         ctx.stroke();
       }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.lineWidth = 5;
+      ctx.globalAlpha = .38;
+      for (const lat of cloudBands) {
+        const line = [];
+        for (let lon = -180; lon <= 180; lon += 5) {
+          line.push([lon, lat + Math.sin((lon + time * .018) * Math.PI / 90) * 2.3]);
+        }
+        drawProjectedLine(line, rotation + 9, r * 1.005, cx, cy, false);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
       for (const item of globeCountries) {
         const lon = item.x / 100 * 360 - 180;
         const lat = 90 - item.y / 100 * 180;
@@ -479,10 +522,11 @@ def page():
         if (p.z <= .04) continue;
         const x = cx + p.x * r;
         const y = cy - p.y * r;
-        const size = Math.max(5, Math.min(18, 5 + item.share * 60)) * (.65 + p.z * .35);
+        const pulse = 1 + Math.sin(time * .006 + lon) * .12;
+        const size = Math.max(5, Math.min(18, 5 + item.share * 60)) * (.65 + p.z * .35) * pulse;
         ctx.beginPath();
-        ctx.arc(x, y, size * 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(67,211,137,.13)";
+        ctx.arc(x, y, size * 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(67,211,137,.11)";
         ctx.fill();
         ctx.beginPath();
         ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -492,6 +536,11 @@ def page():
         ctx.arc(x, y, size * .38, 0, Math.PI * 2);
         ctx.fillStyle = "#eef7f4";
         ctx.fill();
+        if (item.share > .08 || globeCountries.length <= 3) {
+          ctx.font = "700 18px ui-sans-serif, system-ui";
+          ctx.fillStyle = "rgba(238,247,244,.86)";
+          ctx.fillText(`${item.country}`, x + size + 8, y - size - 4);
+        }
       }
       ctx.restore();
       const shade = ctx.createRadialGradient(cx - r * .32, cy - r * .38, r * .2, cx + r * .2, cy + r * .15, r * 1.18);
@@ -502,6 +551,11 @@ def page():
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fillStyle = shade;
       ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.055, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(63,199,232,.22)";
+      ctx.lineWidth = 10;
+      ctx.stroke();
       requestAnimationFrame(drawGlobe);
     }
     requestAnimationFrame(drawGlobe);
