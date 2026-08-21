@@ -30,6 +30,15 @@ STATIC_SUFFIXES = (
     ".woff2",
 )
 
+LONG_LIVED_PATHS = (
+    "/events",
+    "/ws",
+    "/stream",
+    "/sse",
+)
+
+MAX_NORMAL_REQUEST_TIME = 30.0
+
 COUNTRY_POINTS = {
     "US": ("United States", 38, -97),
     "CA": ("Canada", 56, -106),
@@ -136,6 +145,15 @@ def safe_float(value):
         return 0.0
 
 
+def is_long_lived_request(uri):
+    path = (uri or "/").split("?", 1)[0]
+    return any(path == item or path.startswith(f"{item}/") for item in LONG_LIVED_PATHS)
+
+
+def is_normal_timing_request(uri, request_time):
+    return not is_long_lived_request(uri) and request_time <= MAX_NORMAL_REQUEST_TIME
+
+
 def load_rows(hours=24, include_assets=False):
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     rows = []
@@ -165,7 +183,8 @@ def summarize(rows):
     status_counts = Counter()
     unique_ips = set()
     host_unique = defaultdict(set)
-    total_time = 0.0
+    normal_total_time = 0.0
+    normal_count = 0
     slow = []
     ip_seen = {}
 
@@ -186,8 +205,10 @@ def summarize(rows):
         status_counts[status] += 1
         unique_ips.add(ip)
         host_unique[host].add(ip)
-        total_time += request_time
-        slow.append((request_time, host, uri, status))
+        if is_normal_timing_request(uri, request_time):
+            normal_total_time += request_time
+            normal_count += 1
+            slow.append((request_time, host, uri, status))
         seen = ip_seen.setdefault(
             ip,
             {
@@ -225,7 +246,8 @@ def summarize(rows):
     return {
         "totalViews": len(rows),
         "uniqueVisitors": len(unique_ips),
-        "avgRequestTime": total_time / len(rows) if rows else 0,
+        "avgRequestTime": normal_total_time / normal_count if normal_count else 0,
+        "avgRequestSample": normal_count,
         "hosts": [
             {"host": host, "views": views, "uniqueVisitors": len(host_unique[host])}
             for host, views in host_counts.most_common()
@@ -331,7 +353,7 @@ def page():
       <div class="card"><span>30 天访问</span><strong id="days30Views">-</strong></div>
       <div class="card"><span>当前范围访问</span><strong id="views">-</strong></div>
       <div class="card"><span>独立访客 IP</span><strong id="unique">-</strong></div>
-      <div class="card"><span>平均响应</span><strong id="avg">-</strong></div>
+      <div class="card"><span>普通响应</span><strong id="avg">-</strong></div>
     </section>
     <section class="panels">
       <div class="panel wide"><h2>全球 IP 分布图</h2><div class="map-wrap"><canvas id="globeCanvas" class="globe-canvas" width="900" height="900" aria-label="Global visitor globe"></canvas><div class="map-empty" id="mapEmpty">暂无国家分布数据</div></div><div class="bars" id="countryBars"></div></div>
