@@ -13,6 +13,7 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | `trade.lulucybtc.com` | 原 `43.167.14.143` 默认 80 页面 |
 | `monitor.lulucybtc.com` | `127.0.0.1:8000`，异常时显示本地降级页 |
 | `admin.lulucybtc.com` | 访问统计后台 `127.0.0.1:18082` |
+| `alttrend.lulucybtc.com` | AltTrend 服务 `127.0.0.1:38621` |
 
 ## 服务器部署
 
@@ -150,6 +151,7 @@ solchain.lulucybtc.com
 trade.lulucybtc.com
 monitor.lulucybtc.com
 admin.lulucybtc.com
+alttrend.lulucybtc.com
 ```
 
 ## HTTPS
@@ -181,7 +183,8 @@ sudo certbot --nginx \
   -d solchain.lulucybtc.com \
   -d trade.lulucybtc.com \
   -d monitor.lulucybtc.com \
-  -d admin.lulucybtc.com
+  -d admin.lulucybtc.com \
+  -d alttrend.lulucybtc.com
 ```
 
 ## 安全建议
