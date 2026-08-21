@@ -125,7 +125,17 @@ sudo vim /etc/lulucybtc-admin.env
 sudo systemctl restart lulucybtc-admin
 ```
 
-后台页面可以查看各域名访问量、独立访客 IP 数、热门路径、国家/地区、状态码、慢请求和浏览器信息。
+后台页面可以查看：
+
+- 今日访问量
+- 7 天访问量
+- 30 天访问量
+- 近 30 天每日访问趋势
+- 独立访客 IP 和访问次数
+- IP 国家/地区分布图
+- 各域名访问量、热门路径、状态码、慢请求和浏览器信息
+
+国家/地区统计优先使用 Cloudflare 请求头 `CF-IPCountry`。如果域名没有走 Cloudflare 代理，国家/地区可能显示为 `Unknown`，但 IP 和访问次数仍会记录。
 
 ## DNS 解析
 

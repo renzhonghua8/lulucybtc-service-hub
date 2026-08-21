@@ -26,7 +26,15 @@ def parse_time(value):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        clean = value.replace("Z", "+0000")
+        if clean[-3] == ":" and clean[-6] in ("+", "-"):
+            clean = clean[:-3] + clean[-2:]
+        for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S.%f%z"):
+            try:
+                return datetime.strptime(clean, fmt)
+            except ValueError:
+                pass
+        return None
     except ValueError:
         return None
 
