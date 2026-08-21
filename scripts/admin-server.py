@@ -322,7 +322,7 @@ def page():
 <body>
   <main>
     <section class="top">
-      <div><h1>LULUCYBTC Admin</h1><p>访问量、来源和响应速度统计</p></div>
+      <div><h1>LULUCYBTC Admin</h1><p>访问量、来源和响应速度统计 · <span id="updated">等待刷新</span></p></div>
       <label>时间范围 <select id="hours"><option value="24">24 小时</option><option value="72">3 天</option><option value="168">7 天</option><option value="720">30 天</option></select></label>
     </section>
     <section class="grid">
@@ -347,7 +347,13 @@ def page():
   </main>
   <script>
     const $ = (id) => document.getElementById(id);
-    const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
+    const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (char) => {
+      if (char === "&") return "&amp;";
+      if (char === "<") return "&lt;";
+      if (char === ">") return "&gt;";
+      if (char === '"') return "&quot;";
+      return "&#39;";
+    });
     const row = (a,b,c="") => `<div class="row"><small>${esc(a)}</small><b class="pill">${esc(b)}</b><small>${esc(c)}</small></div>`;
     function renderMap(countries){
       const points = countries.filter((x) => Number.isFinite(x.x) && Number.isFinite(x.y));
@@ -387,10 +393,11 @@ def page():
       $("ua").innerHTML = data.userAgents.map(x => row(x.userAgent, x.views)).join("") || row("暂无数据","-");
       renderMap(data.countries);
       renderDaily(data.windows.daily);
+      $("updated").textContent = `最后更新 ${new Date().toLocaleTimeString("zh-CN", {hour12:false})}`;
     }
     $("hours").addEventListener("change", load);
     load();
-    setInterval(load, 30000);
+    setInterval(load, 5000);
   </script>
 </body>
 </html>"""
