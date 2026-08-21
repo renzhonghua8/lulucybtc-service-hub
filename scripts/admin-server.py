@@ -314,7 +314,7 @@ def page():
     h1{margin:0;font-size:2rem}p{margin:6px 0 0;color:var(--muted)}select,label{color:var(--muted)}select{height:38px;border:1px solid var(--line);border-radius:8px;background:#0c151d;color:var(--text);padding:0 10px}
     .grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.card,.panel{border:1px solid var(--line);border-radius:8px;background:var(--panel)}.card{padding:16px}.card span{color:var(--muted);font-size:.86rem}.card strong{display:block;margin-top:8px;font-size:1.55rem}
     .panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.panel{overflow:hidden}.panel.wide{grid-column:1/-1}.panel h2{margin:0;padding:13px 15px;border-bottom:1px solid var(--line);font-size:1rem}.rows{display:grid}.row{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:11px 15px;border-bottom:1px solid rgba(255,255,255,.07);align-items:center}.row:last-child{border-bottom:0}.row small{color:var(--muted);overflow-wrap:anywhere}.pill{color:var(--cyan);font-weight:800}.warn{color:var(--warn)}
-    .map-wrap{position:relative;display:grid;place-items:center;min-height:390px;padding:18px;background:radial-gradient(circle at 50% 45%,rgba(63,199,232,.16),transparent 22rem),linear-gradient(180deg,rgba(20,37,48,.62),rgba(8,16,22,.3))}.globe{position:relative;width:min(360px,72vw);aspect-ratio:1;border:1px solid rgba(63,199,232,.22);border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(238,247,244,.24),transparent 8rem),radial-gradient(circle at 68% 64%,rgba(67,211,137,.16),transparent 9rem),linear-gradient(145deg,#0b2634,#071118 72%);box-shadow:inset -36px -42px 70px rgba(0,0,0,.48),inset 18px 18px 34px rgba(255,255,255,.05),0 26px 70px rgba(0,0,0,.38);overflow:hidden}.globe:before{content:"";position:absolute;inset:9%;border-radius:50%;background:repeating-linear-gradient(90deg,transparent 0 33px,rgba(255,255,255,.08) 34px 35px),repeating-linear-gradient(0deg,transparent 0 33px,rgba(255,255,255,.07) 34px 35px);mask-image:radial-gradient(circle,#000 64%,transparent 66%);opacity:.7;animation:globeShift 18s linear infinite}.globe:after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 28% 22%,rgba(255,255,255,.18),transparent 7rem),linear-gradient(90deg,transparent 0 54%,rgba(0,0,0,.2) 78%,rgba(0,0,0,.55));pointer-events:none}.globe-land{position:absolute;inset:9%;border-radius:50%;background:radial-gradient(ellipse at 32% 35%,rgba(67,211,137,.22) 0 15%,transparent 16%),radial-gradient(ellipse at 57% 28%,rgba(63,199,232,.16) 0 18%,transparent 19%),radial-gradient(ellipse at 63% 58%,rgba(67,211,137,.16) 0 19%,transparent 20%),radial-gradient(ellipse at 39% 70%,rgba(63,199,232,.13) 0 15%,transparent 16%);filter:blur(.2px);opacity:.88}.map-dot{position:absolute;z-index:3;border-radius:999px;background:var(--green);box-shadow:0 0 0 6px rgba(67,211,137,.16),0 0 18px rgba(67,211,137,.65);transform:translate(-50%,-50%)}.map-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none;z-index:4}.bars{display:grid;gap:8px;padding:14px 15px}.bar{display:grid;grid-template-columns:140px 1fr 70px;gap:12px;align-items:center}.bar-track{height:9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--cyan))}@keyframes globeShift{to{background-position:70px 0,0 0}}
+    .map-wrap{position:relative;display:grid;place-items:center;min-height:430px;padding:18px;background:radial-gradient(circle at 50% 45%,rgba(63,199,232,.16),transparent 22rem),linear-gradient(180deg,rgba(20,37,48,.62),rgba(8,16,22,.3))}.globe-canvas{width:min(440px,78vw);height:auto;aspect-ratio:1;filter:drop-shadow(0 28px 70px rgba(0,0,0,.42))}.map-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none;z-index:4}.bars{display:grid;gap:8px;padding:14px 15px}.bar{display:grid;grid-template-columns:140px 1fr 70px;gap:12px;align-items:center}.bar-track{height:9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--cyan))}
     .daily{display:grid;grid-template-columns:repeat(30,1fr);gap:4px;align-items:end;min-height:160px;padding:16px}.day{min-height:6px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--cyan),rgba(63,199,232,.35))}
     @media(max-width:1100px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:900px){.grid,.panels{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.bar{grid-template-columns:1fr}.daily{grid-template-columns:repeat(15,1fr)}}
   </style>
@@ -334,7 +334,7 @@ def page():
       <div class="card"><span>平均响应</span><strong id="avg">-</strong></div>
     </section>
     <section class="panels">
-      <div class="panel wide"><h2>全球 IP 分布图</h2><div class="map-wrap"><div class="globe" aria-label="Global visitor globe"><div class="globe-land"></div><div id="mapDots"></div></div><div class="map-empty" id="mapEmpty">暂无国家分布数据</div></div><div class="bars" id="countryBars"></div></div>
+      <div class="panel wide"><h2>全球 IP 分布图</h2><div class="map-wrap"><canvas id="globeCanvas" class="globe-canvas" width="900" height="900" aria-label="Global visitor globe"></canvas><div class="map-empty" id="mapEmpty">暂无国家分布数据</div></div><div class="bars" id="countryBars"></div></div>
       <div class="panel wide"><h2>近 30 天每日访问量</h2><div class="daily" id="daily"></div></div>
       <div class="panel"><h2>域名访问</h2><div class="rows" id="hosts"></div></div>
       <div class="panel"><h2>热门页面</h2><div class="rows" id="paths"></div></div>
@@ -355,20 +355,138 @@ def page():
       return "&#39;";
     });
     const row = (a,b,c="") => `<div class="row"><small>${esc(a)}</small><b class="pill">${esc(b)}</b><small>${esc(c)}</small></div>`;
+    const canvas = $("globeCanvas");
+    const ctx = canvas.getContext("2d");
+    let globeCountries = [];
+    const land = [
+      [[-165,72],[-130,58],[-122,36],[-102,22],[-82,24],[-58,46],[-70,68],[-105,74]],
+      [[-82,13],[-76,-10],[-66,-22],[-58,-42],[-70,-56],[-82,-34],[-92,-12]],
+      [[-18,34],[2,50],[34,56],[66,48],[92,56],[128,46],[145,28],[112,10],[82,18],[54,8],[36,24],[10,18],[-8,28]],
+      [[-18,32],[10,34],[34,20],[42,-2],[31,-32],[18,-35],[4,-20],[-10,2]],
+      [[68,8],[84,22],[104,15],[122,4],[112,-8],[91,-4],[74,-14]],
+      [[112,-11],[153,-24],[146,-42],[118,-38],[108,-26]],
+      [[-52,72],[-28,72],[-22,62],[-45,58]],
+    ];
+    function project(lat, lon, rotation){
+      const rad = Math.PI / 180;
+      const phi = lat * rad;
+      const lambda = (lon + rotation) * rad;
+      return {
+        x: Math.cos(phi) * Math.sin(lambda),
+        y: Math.sin(phi),
+        z: Math.cos(phi) * Math.cos(lambda),
+      };
+    }
+    function drawGlobe(time){
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = Math.min(w, h) * .39;
+      const rotation = (time * .003) % 360;
+      ctx.clearRect(0, 0, w, h);
+      const glow = ctx.createRadialGradient(cx, cy, r * .3, cx, cy, r * 1.45);
+      glow.addColorStop(0, "rgba(63,199,232,.18)");
+      glow.addColorStop(1, "rgba(63,199,232,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.42, 0, Math.PI * 2);
+      ctx.fill();
+      const ocean = ctx.createRadialGradient(cx - r * .35, cy - r * .42, r * .08, cx, cy, r);
+      ocean.addColorStop(0, "#2f6f86");
+      ocean.addColorStop(.42, "#123747");
+      ocean.addColorStop(1, "#061117");
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = ocean;
+      ctx.fill();
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.strokeStyle = "rgba(238,247,244,.10)";
+      ctx.lineWidth = 1.1;
+      for (let lat = -60; lat <= 60; lat += 30) {
+        ctx.beginPath();
+        let started = false;
+        for (let lon = -180; lon <= 180; lon += 4) {
+          const p = project(lat, lon, rotation);
+          if (p.z <= 0) { started = false; continue; }
+          const x = cx + p.x * r;
+          const y = cy - p.y * r;
+          started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          started = true;
+        }
+        ctx.stroke();
+      }
+      for (let lon = -150; lon <= 180; lon += 30) {
+        ctx.beginPath();
+        let started = false;
+        for (let lat = -80; lat <= 80; lat += 4) {
+          const p = project(lat, lon, rotation);
+          if (p.z <= 0) { started = false; continue; }
+          const x = cx + p.x * r;
+          const y = cy - p.y * r;
+          started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          started = true;
+        }
+        ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(67,211,137,.26)";
+      ctx.strokeStyle = "rgba(130,235,190,.18)";
+      ctx.lineWidth = 1.4;
+      for (const poly of land) {
+        ctx.beginPath();
+        let started = false;
+        for (const item of poly) {
+          const p = project(item[1], item[0], rotation);
+          if (p.z <= 0) { started = false; continue; }
+          const x = cx + p.x * r;
+          const y = cy - p.y * r;
+          started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          started = true;
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+      for (const item of globeCountries) {
+        const lon = item.x / 100 * 360 - 180;
+        const lat = 90 - item.y / 100 * 180;
+        const p = project(lat, lon, rotation);
+        if (p.z <= .04) continue;
+        const x = cx + p.x * r;
+        const y = cy - p.y * r;
+        const size = Math.max(5, Math.min(18, 5 + item.share * 60)) * (.65 + p.z * .35);
+        ctx.beginPath();
+        ctx.arc(x, y, size * 2.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(67,211,137,.13)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fillStyle = "#43d389";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, size * .38, 0, Math.PI * 2);
+        ctx.fillStyle = "#eef7f4";
+        ctx.fill();
+      }
+      ctx.restore();
+      const shade = ctx.createRadialGradient(cx - r * .32, cy - r * .38, r * .2, cx + r * .2, cy + r * .15, r * 1.18);
+      shade.addColorStop(0, "rgba(255,255,255,.22)");
+      shade.addColorStop(.45, "rgba(255,255,255,0)");
+      shade.addColorStop(1, "rgba(0,0,0,.56)");
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = shade;
+      ctx.fill();
+      requestAnimationFrame(drawGlobe);
+    }
+    requestAnimationFrame(drawGlobe);
     function renderMap(countries){
       const points = countries.filter((x) => Number.isFinite(x.x) && Number.isFinite(x.y));
+      globeCountries = points;
       $("mapEmpty").style.display = points.length ? "none" : "grid";
-      $("mapDots").innerHTML = points.map((x) => {
-        const lon = x.x / 100 * 360 - 180;
-        const lat = 90 - x.y / 100 * 180;
-        const rad = Math.PI / 180;
-        const visibleLon = Math.max(-90, Math.min(90, lon));
-        const px = 50 + Math.sin(visibleLon * rad) * Math.cos(lat * rad) * 39;
-        const py = 50 - Math.sin(lat * rad) * 39;
-        const depth = Math.max(.45, Math.cos(visibleLon * rad));
-        const size = Math.max(9, Math.min(28, 9 + x.share * 86)) * depth;
-        return `<span class="map-dot" title="${esc(x.label)} ${x.views}" style="left:${px}%;top:${py}%;width:${size}px;height:${size}px;opacity:${depth}"></span>`;
-      }).join("");
       const max = Math.max(1, ...countries.map((x) => x.views));
       $("countryBars").innerHTML = countries.slice(0, 10).map((x) => `
         <div class="bar"><small>${esc(x.label)} (${esc(x.country)})</small><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, x.views / max * 100)}%"></div></div><b class="pill">${esc(x.views)}</b></div>
