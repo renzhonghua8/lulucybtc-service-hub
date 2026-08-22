@@ -195,6 +195,15 @@ sudo certbot --nginx \
 
 这个路径会直接读取 `/var/www/lulucybtc`，不会转发到后端应用，避免 admin 返回 401 或业务服务返回 404/500 导致证书验证失败。
 
+统一 Nginx 配置同时监听 80 和 443，所有域名共用：
+
+```text
+/etc/letsencrypt/live/live.lulucybtc.com/fullchain.pem
+/etc/letsencrypt/live/live.lulucybtc.com/privkey.pem
+```
+
+这张证书的 SAN 需要包含全部域名。不要再单独保留 `live.lulucybtc.com.conf`，否则会和统一配置冲突。
+
 ## 安全建议
 
 `trade.lulucybtc.com` 和 `live.lulucybtc.com` 建议增加访问保护。优先考虑 Cloudflare Access；也可以用 Nginx Basic Auth。
