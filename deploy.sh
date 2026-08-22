@@ -107,8 +107,10 @@ enable_nginx
 
 echo "Done."
 echo "Open: http://lulucybtc.com"
-echo "Main: http://main.lulucybtc.com -> 127.0.0.1:4173"
+echo "Main: http://main.lulucybtc.com -> 127.0.0.1:18089"
 echo "Trade: http://trade.lulucybtc.com -> original 43.167.14.143 default port 80 page"
+echo "Live: http://live.lulucybtc.com -> 127.0.0.1:8001"
+echo "Legacy live path: http://lulucybtc.com/live -> 127.0.0.1:8001"
 echo "AltTrend: http://alttrend.lulucybtc.com -> 127.0.0.1:38621"
 echo "Traffic log: /var/log/nginx/lulucybtc_access.json"
 echo "Traffic summary: lulucybtc-traffic-summary"

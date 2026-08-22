@@ -7,11 +7,12 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | 域名 | 目标服务 |
 | --- | --- |
 | `lulucybtc.com` / `www.lulucybtc.com` | 静态中转页 |
-| `main.lulucybtc.com` | `127.0.0.1:4173` |
+| `lulucybtc.com/live` | 兼容旧入口，转发到 Binance OI 实盘服务 `127.0.0.1:8001` |
+| `main.lulucybtc.com` | 合约监控与回测工具 `127.0.0.1:18089` |
 | `bscchain.lulucybtc.com` | `127.0.0.1:18080` |
 | `solchain.lulucybtc.com` | 前端 `127.0.0.1:5174`，API `127.0.0.1:8787/api/`，WebSocket `127.0.0.1:8787/ws` |
 | `trade.lulucybtc.com` | 原 `43.167.14.143` 默认 80 页面 |
-| `live.lulucybtc.com` | `127.0.0.1:8000`，异常时显示本地降级页 |
+| `live.lulucybtc.com` | Binance OI 实盘/监控服务 `127.0.0.1:8001` |
 | `admin.lulucybtc.com` | 访问统计后台 `127.0.0.1:18082` |
 | `alttrend.lulucybtc.com` | AltTrend 服务 `127.0.0.1:38621` |
 
@@ -60,12 +61,12 @@ Cloudflare 502 表示 DNS 已经到服务器了，但 Nginx 反代的本机端�
 ```bash
 curl -I http://127.0.0.1:5174
 curl -I http://127.0.0.1:8787/api/snapshot
-curl -I http://127.0.0.1:4173
+curl -I http://127.0.0.1:18089
 curl -I -H 'Host: 43.167.14.143' http://127.0.0.1
-curl -I http://127.0.0.1:8000
+curl -I http://127.0.0.1:8001/live
 ```
 
-如果 `live.lulucybtc.com` 还是 502，重点检查 `8000` 端口服务是否正在运行，并确认它监听在 `127.0.0.1:8000` 或 `0.0.0.0:8000`。
+如果 `live.lulucybtc.com` 还是 502，重点检查 `8001` 端口服务是否正在运行，并确认它监听在 `127.0.0.1:8001` 或 `0.0.0.0:8001`。
 
 ## 访问量统计
 
