@@ -187,6 +187,14 @@ sudo certbot --nginx \
   -d alttrend.lulucybtc.com
 ```
 
+如果使用 `certbot certonly --webroot`，Nginx 已为所有子域名保留：
+
+```text
+/.well-known/acme-challenge/
+```
+
+这个路径会直接读取 `/var/www/lulucybtc`，不会转发到后端应用，避免 admin 返回 401 或业务服务返回 404/500 导致证书验证失败。
+
 ## 安全建议
 
 `trade.lulucybtc.com` 和 `live.lulucybtc.com` 建议增加访问保护。优先考虑 Cloudflare Access；也可以用 Nginx Basic Auth。
