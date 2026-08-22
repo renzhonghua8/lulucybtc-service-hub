@@ -11,7 +11,7 @@ LULUCYBTC 根域名中转页和 Nginx 反向代理配置。
 | `bscchain.lulucybtc.com` | `127.0.0.1:18080` |
 | `solchain.lulucybtc.com` | 前端 `127.0.0.1:5174`，API `127.0.0.1:8787/api/`，WebSocket `127.0.0.1:8787/ws` |
 | `trade.lulucybtc.com` | 原 `43.167.14.143` 默认 80 页面 |
-| `monitor.lulucybtc.com` | `127.0.0.1:8000`，异常时显示本地降级页 |
+| `live.lulucybtc.com` | `127.0.0.1:8000`，异常时显示本地降级页 |
 | `admin.lulucybtc.com` | 访问统计后台 `127.0.0.1:18082` |
 | `alttrend.lulucybtc.com` | AltTrend 服务 `127.0.0.1:38621` |
 
@@ -65,7 +65,7 @@ curl -I -H 'Host: 43.167.14.143' http://127.0.0.1
 curl -I http://127.0.0.1:8000
 ```
 
-如果 `monitor.lulucybtc.com` 还是 502，重点检查 `8000` 端口服务是否正在运行，并确认它监听在 `127.0.0.1:8000` 或 `0.0.0.0:8000`。
+如果 `live.lulucybtc.com` 还是 502，重点检查 `8000` 端口服务是否正在运行，并确认它监听在 `127.0.0.1:8000` 或 `0.0.0.0:8000`。
 
 ## 访问量统计
 
@@ -149,7 +149,7 @@ main.lulucybtc.com
 bscchain.lulucybtc.com
 solchain.lulucybtc.com
 trade.lulucybtc.com
-monitor.lulucybtc.com
+live.lulucybtc.com
 admin.lulucybtc.com
 alttrend.lulucybtc.com
 ```
@@ -182,11 +182,11 @@ sudo certbot --nginx \
   -d bscchain.lulucybtc.com \
   -d solchain.lulucybtc.com \
   -d trade.lulucybtc.com \
-  -d monitor.lulucybtc.com \
+  -d live.lulucybtc.com \
   -d admin.lulucybtc.com \
   -d alttrend.lulucybtc.com
 ```
 
 ## 安全建议
 
-`trade.lulucybtc.com` 和 `monitor.lulucybtc.com` 建议增加访问保护。优先考虑 Cloudflare Access；也可以用 Nginx Basic Auth。
+`trade.lulucybtc.com` 和 `live.lulucybtc.com` 建议增加访问保护。优先考虑 Cloudflare Access；也可以用 Nginx Basic Auth。

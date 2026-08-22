@@ -116,4 +116,4 @@ echo "Admin: http://admin.lulucybtc.com -> 127.0.0.1:18082"
 echo "Admin credentials file: /etc/lulucybtc-admin.env"
 echo
 echo "HTTPS next step after DNS points to this server:"
-echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d monitor.lulucybtc.com -d admin.lulucybtc.com -d alttrend.lulucybtc.com"
+echo "  certbot --nginx -d lulucybtc.com -d www.lulucybtc.com -d main.lulucybtc.com -d bscchain.lulucybtc.com -d solchain.lulucybtc.com -d trade.lulucybtc.com -d live.lulucybtc.com -d admin.lulucybtc.com -d alttrend.lulucybtc.com"
